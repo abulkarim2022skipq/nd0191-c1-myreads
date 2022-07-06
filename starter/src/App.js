@@ -4,25 +4,31 @@ import { getAll, update } from "./BooksAPI";
 import Dashboard from "./components/Dashboard";
 import Search from "./components/Search";
 import { useState, useEffect } from "react";
+import BookDetails from "./components/BookDetails";
 
 function App() {
   const [books, setBooks] = useState([]);
 
-  const changeShelf = (book, shelf) => {
+  const changeShelf = (bookToChange, shelf) => {
     // temp array to change shelf
     let mutableArray = books.map((a) => {
       return { ...a };
     });
 
-    let selectedBook = mutableArray.find((a) => a.id === book.id);
+    let bookFound = mutableArray.find((a) => a.id === bookToChange.id);
 
-    if (selectedBook) {
-      selectedBook.shelf = shelf;
+    if (bookFound) {
+      mutableArray = mutableArray.map((book) => {
+        if (bookToChange.id === book.id) {
+          return { ...book, shelf };
+        }
+        return book;
+      });
     } else {
-      book.shelf = shelf;
-      mutableArray = [...mutableArray, book];
+      bookToChange.shelf = shelf;
+      mutableArray = [...mutableArray, bookToChange];
     }
-    update(book, shelf).then((res) => {});
+    update(bookToChange, shelf).then((res) => {});
     setBooks(mutableArray);
   };
 
@@ -33,7 +39,6 @@ function App() {
     } else {
       getAll().then((res) => {
         setBooks(res);
-        // localStorage.setItem("books", JSON.stringify(res));
       });
     }
   }, []);
@@ -50,6 +55,7 @@ function App() {
           path="/search"
           element={<Search books={books} changeShelf={changeShelf} />}
         ></Route>
+        <Route path="/bookdetails" element={<BookDetails />}></Route>
       </Routes>
     </div>
   );

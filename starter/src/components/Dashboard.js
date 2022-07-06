@@ -8,27 +8,25 @@ const Dashboard = ({ books, changeShelf }) => {
     return books.filter(({ shelf }) => shelf === bookshelf);
   };
 
+  const shelves = [
+    { id: 0, title: "Currently Reading", code: "currentlyReading" },
+    { id: 1, title: "Want to Read", code: "wantToRead" },
+    { id: 2, title: "Read", code: "read" },
+  ];
+
   return (
     <div>
       <Header></Header>
-      <BookShelf
-        shelfTitle="Currently Reading"
-        shelfCode="currentlyReading"
-        books={getBooksForShelf("currentlyReading")}
-        changeShelf={changeShelf}
-      ></BookShelf>
-      <BookShelf
-        shelfTitle="Want to Read"
-        shelfCode="wantToRead"
-        books={getBooksForShelf("wantToRead")}
-        changeShelf={changeShelf}
-      ></BookShelf>
-      <BookShelf
-        shelfTitle="Read"
-        shelfCode="read"
-        books={getBooksForShelf("read")}
-        changeShelf={changeShelf}
-      ></BookShelf>
+
+      {shelves.map((shelf) => (
+        <BookShelf
+          key={shelf.id}
+          shelfTitle={shelf.title}
+          shelfCode={shelf.code}
+          books={getBooksForShelf(shelf.code)}
+          changeShelf={changeShelf}
+        ></BookShelf>
+      ))}
       <div className="open-search">
         <Link to={"/search"}>Add a book</Link>
       </div>

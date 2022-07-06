@@ -8,6 +8,7 @@ MyReads is simple app created using starter template from Udacity's React Fundam
   - selecting the shelf from dropdown
   - dragging the book from one shelf to another
 - new book can be searched from search page and added to main page
+- book can be clicked on to see details
 
 ## TL;DR
 

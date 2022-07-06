@@ -3,15 +3,25 @@ import { Link } from "react-router-dom";
 import { search } from "./../BooksAPI";
 import Book from "./Book";
 import PropTypes from "prop-types";
+import useDebounce from "./../hooks/useDebounce";
 
-const Search = ({ changeShelf }) => {
+const Search = ({ changeShelf, books }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedValue = useDebounce(searchQuery, 500);
+
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     if (searchQuery.length > 0) {
-      search(searchQuery, 5).then((res) => {
-        if (res["error"] === undefined) {
+      search(debouncedValue, 5).then((res) => {
+        if (!res.error) {
+          res = res.map((searhedBook) => {
+            const bookOnShelf = books.find((b) => b.id === searhedBook.id);
+            if (bookOnShelf) {
+              searhedBook.shelf = bookOnShelf.shelf;
+            }
+            return searhedBook;
+          });
           setSearchResults(res);
         } else {
           setSearchResults([]);
@@ -20,7 +30,7 @@ const Search = ({ changeShelf }) => {
     } else {
       setSearchResults([]);
     }
-  }, [searchQuery]);
+  }, [books, debouncedValue]);
 
   return (
     <div className="search-books">
@@ -56,5 +66,6 @@ const Search = ({ changeShelf }) => {
 
 Search.propTypes = {
   changeShelf: PropTypes.func.isRequired,
+  books: PropTypes.array.isRequired,
 };
 export default Search;
